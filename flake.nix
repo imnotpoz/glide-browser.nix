@@ -35,6 +35,15 @@
           ...
         }:
         let
+          desktopItem = pkgs.makeDesktopItem {
+            name = "glide-browser";
+            desktopName = "Glide Browser";
+            comment = "Extensible and keyboard-focused web browser built on Firefox";
+            exec = "glide";
+            icon = "glide-browser";
+            categories = [ "Network" "WebBrowser" ];
+          };
+
           glide-browser = pkgs.stdenv.mkDerivation rec {
             pname = "glide-browser";
             version = "0.1.56a";
@@ -104,6 +113,14 @@
                   mkdir -p $out/bin $out/lib/glide
                   cp -r glide/* $out/lib/glide/
                   chmod +x $out/lib/glide/glide
+
+                  for size in 16 32 48 64 128; do
+                    dir=$out/share/icons/hicolor/''${size}x''${size}/apps
+                    mkdir -p $dir
+                    cp glide/browser/chrome/icons/default/default$size.png $dir/glide-browser.png
+                  done
+
+                  ln -s ${desktopItem}/share/applications $out/share/
 
                   runHook postInstall
                 ''
